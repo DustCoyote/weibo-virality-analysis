@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+
+# Large local dataset and generated outputs
+dataset_weibo.txt
+weibo_summary_full.csv
+weibo_stats_full.txt
+analysis_projects/
+early_features_prediction/
+early_features_prediction_v2/

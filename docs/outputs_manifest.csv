@@ -1,0 +1,15 @@
+slide_topic,output_file,created_by,meaning
+資料集摘要,weibo_summary_full.csv,scripts/01_analyze_weibo_dataset.py,每筆 cascade 的規模、深度、時間摘要
+長尾分布,analysis_projects/07_long_tail/long_tail_distribution.png,scripts/02_make_analysis_projects.py,顯示多數 cascade 小、少數 cascade 極大的長尾分布
+長尾貢獻比例,analysis_projects/07_long_tail/top_percent_contribution.csv,scripts/02_make_analysis_projects.py,前 1% / 10% cascade 貢獻比例
+傳播規模分布,analysis_projects/01_spread_scale/scale_distribution.png,scripts/02_make_analysis_projects.py,cascade 傳播規模分箱圖
+傳播深度,analysis_projects/02_spread_depth/depth_distribution.png,scripts/02_make_analysis_projects.py,最大傳播深度分布
+傳播速度,analysis_projects/03_spread_speed/delay_distribution.png,scripts/02_make_analysis_projects.py,轉發延遲分布
+網路結構,analysis_projects/05_network_structure/structure_type_counts.png,scripts/02_make_analysis_projects.py,star-like / tree-like / chain-like 結構分類
+關鍵節點,analysis_projects/06_key_nodes/top_direct_influencers.png,scripts/02_make_analysis_projects.py,直接帶動最多下游轉發的節點
+Baseline 模型,early_features_prediction/model_metrics.csv,scripts/03_train_baseline_and_tree_models.py,線性 baseline、Random Forest、Gradient Boosting 指標
+Baseline 預測散點圖,early_features_prediction/baseline_prediction_fit_line.png,scripts/04_plot_prediction_fit_line.py,完整尺度的實際值 vs 預測值
+Zoom 散點圖,early_features_prediction/baseline_prediction_fit_line_zoom_20000.png,scripts/05_plot_prediction_fit_line_zoom.py,聚焦 20,000 以內的實際值與預測值
+改進模型比較,early_features_prediction_v2/v2_model_comparison.png,scripts/06_train_improved_models.py,R2 與 Top 10% recall 的模型比較
+Log scale 散點圖,early_features_prediction_v2/v2_log_baseline_prediction_vs_actual_log.png,scripts/06_train_improved_models.py,用 log scale 檢視長尾下的預測效果
+分段誤差,early_features_prediction_v2/v2_bucket_errors.csv,scripts/06_train_improved_models.py,小 / 中 / 大 cascade 的分段誤差
