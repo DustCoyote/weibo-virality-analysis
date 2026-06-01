@@ -61,7 +61,7 @@ python run_all.py
    - 使用 `03_train_baseline_and_tree_models.py`
    - 觀察窗：前 1 小時
    - 預測窗：24 小時總傳播規模
-   - baseline：只用前 1 小時傳播數做線性回歸
+   - 模型比較：線性回歸 baseline、Random Forest、XGBoost
 
 3. 散點圖與扇形誤差：
    - 使用 `04_plot_prediction_fit_line.py`

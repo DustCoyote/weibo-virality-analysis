@@ -9,6 +9,7 @@ from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
+from xgboost import XGBRegressor
 
 
 DATASET = Path("dataset_weibo.txt")
@@ -187,6 +188,29 @@ def plot_feature_importance(path, model, feature_names):
     plt.close()
 
 
+def plot_model_comparison(path, metrics):
+    plot_df = metrics[metrics["model"].isin(["baseline_observed_1h", "random_forest", "xgboost"])].copy()
+    plot_df["label"] = plot_df["model"].map(
+        {
+            "baseline_observed_1h": "Linear baseline",
+            "random_forest": "Random Forest",
+            "xgboost": "XGBoost",
+        }
+    )
+    plot_df = plot_df.sort_values("r2", ascending=True)
+
+    plt.figure(figsize=(8, 4.8))
+    bars = plt.barh(plot_df["label"], plot_df["r2"], color=["#60a5fa", "#34d399", "#f59e0b"])
+    plt.xlim(0, 1)
+    plt.xlabel("R2")
+    plt.title("Linear Regression vs Random Forest vs XGBoost")
+    for bar, value in zip(bars, plot_df["r2"]):
+        plt.text(value + 0.015, bar.get_y() + bar.get_height() / 2, f"{value:.3f}", va="center")
+    plt.tight_layout()
+    plt.savefig(path, dpi=170)
+    plt.close()
+
+
 def main():
     OUTPUT.mkdir(exist_ok=True)
     features, total_rows = build_features()
@@ -222,10 +246,25 @@ def main():
     gradient_boosting.fit(X_train, y_train)
     gb_pred = gradient_boosting.predict(X_test).clip(min=1)
 
+    xgboost = XGBRegressor(
+        n_estimators=320,
+        max_depth=4,
+        learning_rate=0.055,
+        subsample=0.85,
+        colsample_bytree=0.85,
+        objective="reg:squarederror",
+        tree_method="hist",
+        n_jobs=-1,
+        random_state=RANDOM_STATE,
+    )
+    xgboost.fit(X_train, y_train)
+    xgb_pred = xgboost.predict(X_test).clip(min=1)
+
     metrics = pd.DataFrame(
         [
             evaluate("baseline_observed_1h", y_test, baseline_pred),
             evaluate("random_forest", y_test, rf_pred),
+            evaluate("xgboost", y_test, xgb_pred),
             evaluate("gradient_boosting", y_test, gb_pred),
         ]
     ).sort_values("r2", ascending=False)
@@ -234,6 +273,7 @@ def main():
     predictions = {
         "baseline": baseline_pred,
         "random_forest": rf_pred,
+        "xgboost": xgb_pred,
         "gradient_boosting": gb_pred,
     }
     save_prediction_file(
@@ -245,8 +285,11 @@ def main():
 
     plot_prediction_scatter(OUTPUT / "baseline_prediction_vs_actual.png", y_test, baseline_pred, "Baseline Prediction vs Actual")
     plot_prediction_scatter(OUTPUT / "random_forest_prediction_vs_actual.png", y_test, rf_pred, "Random Forest Prediction vs Actual")
+    plot_prediction_scatter(OUTPUT / "xgboost_prediction_vs_actual.png", y_test, xgb_pred, "XGBoost Prediction vs Actual")
     plot_prediction_scatter(OUTPUT / "gradient_boosting_prediction_vs_actual.png", y_test, gb_pred, "Gradient Boosting Prediction vs Actual")
+    plot_model_comparison(OUTPUT / "model_comparison_linear_rf_xgb.png", metrics)
     plot_feature_importance(OUTPUT / "random_forest_feature_importance.png", random_forest, FEATURE_COLUMNS)
+    plot_feature_importance(OUTPUT / "xgboost_feature_importance.png", xgboost, FEATURE_COLUMNS)
     plot_feature_importance(OUTPUT / "gradient_boosting_feature_importance.png", gradient_boosting, FEATURE_COLUMNS)
 
     best = metrics.iloc[0]

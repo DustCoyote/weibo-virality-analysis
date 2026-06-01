@@ -50,6 +50,7 @@ def main():
     rows = [
         plot_fit("baseline", "Baseline: Actual vs Predicted with Fit Line"),
         plot_fit("random_forest", "Random Forest: Actual vs Predicted with Fit Line"),
+        plot_fit("xgboost", "XGBoost: Actual vs Predicted with Fit Line"),
         plot_fit("gradient_boosting", "Gradient Boosting: Actual vs Predicted with Fit Line"),
     ]
     pd.DataFrame(rows).to_csv(PROJECT / "prediction_fit_line_summary.csv", index=False, encoding="utf-8-sig")
